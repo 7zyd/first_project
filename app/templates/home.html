@@ -1,0 +1,51 @@
+<!-- 此模板继承自 'base.html' -->
+{% extends 'base.html' %}
+
+<!-- 重写基模板中的 'breadcrumb' 块 -->
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Boards</li>
+{% endblock %}
+
+<!-- 重写基模板中的 'content' 块 -->
+{% block content %}
+    <!-- 创建一个带有样式类的表格 -->
+    <table class="table">
+        <thead class="thead-inverse">
+            <!-- 表头定义 -->
+            <tr>
+                <th>Board</th>
+                <th>Posts</th>
+                <th>Topics</th>
+                <th>Last Post</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 遍历 'boards' 查询集 -->
+            {% for board in boards %}
+                <tr>
+                    <!-- 板块名称链接及描述 -->
+                    <td>
+                        <a href="{% url 'board_topics' board.pk %}">{{ board.name }}</a>
+                        <small class="text-muted d-block">{{ board.description }}</small>
+                    </td>
+                    <!-- 动态获取板块的帖子数量 -->
+                    <td class="align-middle">{{ board.get_posts_count }}</td>
+                    <!-- 动态获取板块的主题数量 -->
+                    <td class="align-middle">{{ board.topics.count }}</td>
+                    <!-- 最后一贴的详细信息 -->
+                    <td class="align-middle">
+                        {% with post=board.get_last_post %}
+                            {% if post %}
+                                <small>
+                                    <a href="{% url 'topic_posts' board.pk post.topic.pk %}">
+                                        By {{ post.created_by.username }} at {{ post.created_at }}
+                                    </a>
+                                </small>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

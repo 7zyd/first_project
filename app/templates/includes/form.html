@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block body %}
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+        <!-- 导航栏内容...（请根据实际情况填写导航栏内容）-->
+    </nav>
+    <div class="container">
+        <ol class="breadcrumb my-4">
+            {% block breadcrumb %}{% endblock %}
+        </ol>
+
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for error in form.non_field_errors %}
+                    <p{% if forloop.last %} class="mb-0"{% endif %}>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+            <!-- 表单字段循环渲染开始 -->
+            {% for field in form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+
+                    {% if form.is_bound %}
+                        {% if field.errors %}
+                            {% render_field field class="form-control is-invalid" %}
+                            {% for error in field.errors %}
+                                <div class="invalid-feedback">
+                                    {{ error }}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            {% render_field field class="form-control is-valid" %}
+                        {% endif %}
+                    {% else %}
+                        {% render_field field class="form-control" %}
+                    {% endif %}
+                    
+                    {% if field.help_text %}
+                        <small class="form-text text-muted">
+                            {{ field.help_text }}
+                        </small>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            <!-- 表单字段循环渲染结束 -->
+
+            <!-- 如果有表单提交按钮或其他内容，可以在这里添加 -->
+        {% endblock %}
+    </div>
+{% endblock body %}
